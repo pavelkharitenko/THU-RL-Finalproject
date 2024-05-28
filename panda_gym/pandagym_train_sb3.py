@@ -1,68 +1,56 @@
 from stable_baselines3 import DDPG
 import gymnasium as gym
 from datetime import datetime
-import panda_gym
-import randomname
-import time
+import panda_gym, time, randomname
 
-# first create unique experiment name with experiment parameters:
-human_name = randomname.get_name()
-dt_string = datetime.now().strftime("%Y.%m.%d-%H:%M:%S")
-# experiment_parameters
+# Can be run just for training, and visualizing, or run with saving model and logging.
+
+SaveModelandLogs = False # Set to True if agent model needs to be saved after training.
+
+# select experiment_parameters
 max_timesteps =  10_000
 alg_name = DDPG.__name__
-env_name = ["PandaReachDense-v3", "PandaReach-v3", 
-            "PandaReachJointsDense-v3", "PandaReachJoints-v3"][3]
+# choose pandagym environment (reach/pickandplace/etc., dense/sparse, joint/endeffector)
+env_name = ["PandaReachDense-v3", "PandaReach-v3", "PandaReachJointsDense-v3", "PandaReachJoints-v3"][3]
 
-experiment_name = dt_string + "-" + env_name + "-" + alg_name + "-" + str(max_timesteps) + "ts" + "-" + human_name
+# create experiment name like "2024.05.14-20:26:13-PandaReach-v3-DDPG-10000ts-muted-radio_1"
+experiment_name = datetime.now().strftime("%Y.%m.%d-%H:%M:%S") + "-" + env_name + "-" \
+                + alg_name + "-" + str(max_timesteps) + "ts" + "-" + randomname.get_name()
 
-print(experiment_name)
 
-logdir = "pandatrain_logs"
+print("Begin experiment ", experiment_name)
+print("Agent and logs will be saved after training:", SaveModelandLogs)
+
+logdir = "pandatrain_logs" if SaveModelandLogs else None # tensorboard will not store logs if set to none
 modeldir = "./trained_rl_agents/"
-# given by environment:
-# max episode length: 50
 
 
-
-
+# run training experiment
 env = gym.make(env_name, render_mode="human")
 model = DDPG(policy="MultiInputPolicy", env=env, verbose=1, tensorboard_log=logdir)
 model.learn(total_timesteps=max_timesteps, tb_log_name=experiment_name)
 
-model.save(modeldir + experiment_name)
 
-# visualize agent
-print("##### training finished ######")
+# save agent if needed
+if SaveModelandLogs:
+    model.save(modeldir + experiment_name)
+
+
+# visualize agent for 500 timesteps
+print("##### training finished, begin visualizing agent... ######")
 time.sleep(2.0)
 
 observation, info = env.reset()
 
-#vec_env = model.get_env()
-#obs = vec_env.reset()
 for i in range(500):
     action, _state = model.predict(observation, deterministic=True)
-    #obs, reward, done, info = vec_env.step(action)
     
+    # not sure how to plot or utilize these variables yet
     observation, reward, terminated, truncated, info = env.step(action)
     
     if terminated or truncated:
         observation, info = env.reset()
     time.sleep(0.01)
-    #vec_env.render("human")
-    # VecEnv resets automatically
-    # if done:
-    #   obs = vec_env.reset()
 
-#print("first rew", str(rewards_list[0][0]))
-print("#### End #####")
-exit(0)
-for _ in range(500):
-    action = env.action_space.sample() # random action
-    observation, reward, terminated, truncated, info = env.step(action)
+print("#### Visualization ended #####")
 
-    if terminated or truncated:
-        observation, info = env.reset()
-    #time.sleep(0.01)
-
-time.sleep(2.0)
