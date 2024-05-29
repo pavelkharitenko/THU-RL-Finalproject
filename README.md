@@ -56,4 +56,4 @@ Can we mitigate issues in 1. and 2. with improvements common for RL in robotics,
 
 (agents right-winch, muted-radio, dynamic-denim, odious-redoubt in pandatrain_logs)
 
-![](panda_gym/plots/midterm_results.png)
+![](plots/midterm_results.png)
