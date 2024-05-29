@@ -6,7 +6,7 @@ from pathlib import Path
 import pandas as pd
 
 
-result_dir = "pandatrain_logs/"
+result_dir = "panda_gym/pandatrain_logs/"
 
 
 result_files = []
@@ -20,7 +20,7 @@ for i in p.glob('**/*.csv'):
 
 
 
-fig, axs = plt.subplots(1, 3, figsize=(22, 5))
+fig, axs = plt.subplots(1, 3, figsize=(15, 4))
 #fig.suptitle('Training results for Sparse/Dense and Joint/End-effector Control configurations')
 
 fig.suptitle("  ")
@@ -66,6 +66,7 @@ fig.legend( loc='upper center',
     ncol=3, )
 
 plt.show() 
+#fig.savefig("")
 
 
 exit(0)

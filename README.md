@@ -2,7 +2,7 @@
 
 ### Installation:
 
-Install packages `stable-baselines 3`  (sb3) and `gymnasium`, and `pandagym` according to their docs.
+Install packages `stable-baselines 3`  (sb3) and `gymnasium`, and `pandagym` according to their docs. (Also install `seaborn` package if you want to run the plot script)
 
 Can be installed into a python environment like conda.
 
@@ -25,8 +25,6 @@ Run in Google Colab (install sb3, gymnasium, panda and copy code to there) if it
 - `pandagym_test_agent.py` - to test your saved RL agent in pandagym env.
 
 - `pandagym_train_demo.py` - no use, just minimal demo code for presenting training agent in gym
-
-- `pandagym_train_sb3.py` - to train RL agent in pandagym environment
 
 - `gym_classiccontrol_sb3.py` - to just try out gymnasium and sb3 libraries.
 
@@ -52,3 +50,10 @@ Is the motion maybe jerky, not fluent, or uncanny overall?
 3. Consider Experiment tricks:
 Can we mitigate issues in 1. and 2. with improvements common for RL in robotics, such as Behaviour Cloning, Curriculum Learning, Reward Shaping, or hybrid architectures with model-based controllers?
 
+
+
+### Results from Midterm experiment 
+
+(agents right-winch, muted-radio, dynamic-denim, odious-redoubt in pandatrain_logs)
+
+![](panda_gym/plots/midterm_results.png)
