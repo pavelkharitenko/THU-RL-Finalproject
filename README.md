@@ -1,4 +1,4 @@
-## THU SIGS RL Spring 2024, Final Project Group 2
+## THU SIGS RL Spring 2024, Final Project Group 2 - Robotic Manipulation
 
 ### Installation:
 
@@ -41,7 +41,7 @@ Run in Google Colab (install sb3, gymnasium, panda and copy code to there) if it
 
 1. Consider RL setting：
 Which algorithm for which task manipulation problem will work the best? 
-Can we converge with baseline algorithms for the most realistic configuration?
+Can we converge with baseline algorithms for the most realistic configuration (joint control + sparse)?
 
 2. Consider Training result:
 Is the resulting behaviour the agent learned efficient? 
@@ -57,3 +57,11 @@ Can we mitigate issues in 1. and 2. with improvements common for RL in robotics,
 (agents right-winch, muted-radio, dynamic-denim, odious-redoubt in pandatrain_logs)
 
 ![](plots/midterm_results.png)
+
+
+
+### Objectives for Final experiment
+
+- joint control can learn pick and place if trained on dense rewards. However, the resulting movement are not fluent. Apply reward shaping to dense-jointcontrol-pickandplace agent, to obtain fluent motions.
+
+- joint control and sparse rewards cannot learn pick and place even for 20_000 timesteps. Try apply curriculum learning or pre-train with demonstrations.
