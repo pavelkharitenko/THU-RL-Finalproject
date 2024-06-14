@@ -6,15 +6,15 @@ import panda_gym, time, randomname
 
 
 # Can be run just for training, and visualizing, or run with saving model and logging.
-SaveModelandLogs = False # Set to True if agent model needs to be saved after training.
+SaveModelandLogs = True # Set to True if agent model needs to be saved after training.
 
 # select experiment_parameters
-max_timesteps =  600
+max_timesteps =  16_500
 alg_name = DDPG.__name__
 
 # choose pandagym environment (reach/pickandplace/etc., dense/sparse, joint/endeffector)
 env_name = ["PandaReachDense-v3", "PandaReach-v3", "PandaReachJointsDense-v3", "PandaReachJoints-v3",
-            "PandaPushDense-v3"][3]
+            "PandaPushDense-v3"][0]
 
 
 # create experiment name like "2024.05.14-20:26:13-PandaReach-v3-DDPG-10000ts-muted-radio_1"
