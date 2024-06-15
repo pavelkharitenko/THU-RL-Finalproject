@@ -9,8 +9,8 @@ import panda_gym, time, randomname
 SaveModelandLogs = True # Set to True if agent model needs to be saved after training.
 
 # select experiment_parameters
-max_timesteps =  16_500
-alg_name = DDPG.__name__
+max_timesteps =  50_000
+alg_name = PPO.__name__
 
 # choose pandagym environment (reach/pickandplace/etc., dense/sparse, joint/endeffector)
 env_name = ["PandaReachDense-v3", "PandaReach-v3", "PandaReachJointsDense-v3", "PandaReachJoints-v3",
@@ -32,7 +32,7 @@ modeldir = "./panda_gym/pg_agents/"
 # run training experiment
 env = gym.make(env_name, render_mode="human")
 env.reset()
-model = DDPG(policy="MultiInputPolicy", env=env, verbose=1, tensorboard_log=logdir)
+model = PPO(policy="MultiInputPolicy", env=env, verbose=1, tensorboard_log=logdir)
 model.learn(total_timesteps=max_timesteps, tb_log_name=experiment_name)
 
 
