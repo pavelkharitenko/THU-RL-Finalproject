@@ -6,10 +6,10 @@ import panda_gym, time, randomname
 
 
 # Can be run just for training, and visualizing, or run with saving model and logging.
-SaveModelandLogs = True # Set to True if agent model needs to be saved after training.
+SaveModelandLogs = False # Set to True if agent model needs to be saved after training.
 
 # select experiment_parameters
-max_timesteps =  50_000
+max_timesteps =  12
 alg_name = PPO.__name__
 
 # choose pandagym environment (reach/pickandplace/etc., dense/sparse, joint/endeffector)

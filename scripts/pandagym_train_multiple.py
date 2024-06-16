@@ -10,18 +10,15 @@ import panda_gym, time, randomname
 SaveModelandLogs = True # Set to True if agent model needs to be saved after training.
 
 # select experiment_parameters
-max_timesteps =  10_000
-alg_name = DDPG.__name__
+max_timesteps =  30_000
 
 # choose pandagym environment (reach/pickandplace/etc., dense/sparse, joint/endeffector)
-env_name = ["PandaReachDense-v3", "PandaReach-v3", "PandaReachJointsDense-v3", "PandaReachJoints-v3",
-            "PandaPushDense-v3"][4]
 
-algs = [PPO, DDPG, TD3, SAC]
+algs = [TD3]
 
 
 # ee-control and dense/sparse
-selected_environments = ["PandaReach-v3", "PandaReachDense-v3", "PandaSlide-v3", "PandaSlideDense-v3"]
+selected_environments = ["PandaReach-v3"]
 
 
 for rl_alg in algs:
@@ -40,8 +37,8 @@ for rl_alg in algs:
         print("Begin experiment ", experiment_name)
         print("Agent and logs will be saved after training:", SaveModelandLogs)
 
-        logdir = "panda_gym/pandatrain_logs" if SaveModelandLogs else None # tensorboard will not store logs if set to none
-        modeldir = "./panda_gym/trained_rl_agents/"
+        logdir = "panda_gym/pg_logs" if SaveModelandLogs else None # tensorboard will not store logs if set to none
+        modeldir = "./panda_gym/pg_agents/"
 
 
         # run training experiment

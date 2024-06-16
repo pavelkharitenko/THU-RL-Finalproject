@@ -1,7 +1,14 @@
 #import tensorflow as tf
 import matplotlib.pyplot as plt
-
 from stable_baselines3 import results_plotter
+
+
+# color map:
+# ppo: #7cb342
+# sac: #9334E6
+# ddpg: #E52592
+# td3: #F3BB13
+
 exit(0)
 import numpy as np
 
@@ -22,8 +29,5 @@ def get_scalar_run_tensorboard(tag, filepath):
 val, st = get_scalar_run_tensorboard("time/fps",
                                "pandatrain_logs/2024.06.06-21:50:34-PandaReachJoints-v3-DDPG-555ts-sensitive-halibut_1/events.out.tfevents.1717681836.asus-ZenBook.51658.0")
 
-print(a)
-
 plt.plot(st, val)
-
 plt.show()
