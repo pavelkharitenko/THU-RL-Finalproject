@@ -8,24 +8,29 @@ from imitation.data import rollout
 from imitation.data.wrappers import RolloutInfoWrapper
 from imitation.policies.serialize import load_policy
 from imitation.util.util import make_vec_env
-
 import gymnasium as gym
-
 import panda_gym
 
 rng = np.random.default_rng(0)
 
+# Experiment params
+
+SaveModel = True # Set to True if agent model needs to be saved after training.
+n_epochs_bc_pretrain = 100
+alg_name = PPO.__name__
+env_name = ["PandaReach-v3"][0]
+
+experiment_name = datetime.now().strftime("%Y.%m.%d-%H:%M:%S") + "-" + env_name + "-" \
+                + alg_name + "-" + str(n_epochs_bc_pretrain) + "ts" + "-" + randomname.get_name()
+
+modeldir = "./panda_gym/pg_pretrained_agents/"
+
 env = make_vec_env(
-    "PandaReachDense-v3",
+    "PandaReach-v3",
     #"CartPole-v1",
     rng=rng,
     post_wrappers=[lambda env, _: RolloutInfoWrapper(env)],  # for computing rollouts
 )
-
-
-
-
-
 
 def sample_expert_transitions(expert):
     print("Sampling expert transitions.")
@@ -49,26 +54,28 @@ def load_expert():
 
 
 
-# compare expert and agent 
-
-expert_agent_path = "panda_gym/pg_agents/2024.06.14-23:20:48-PandaReachDense-v3-DDPG-16500ts-formal-hertz"
+# Load expert 
+expert_agent_path = "panda_gym/pg_agents/report_agents/2024.06.14-19:19:06-PandaReach-v3-DDPG-50000ts-distinct-chart"
 expert = DDPG.load(expert_agent_path, policy="MultiInputPolicy", env=env, verbose=1)
 
+# Evaluate expert
+#rew_mean, rew_std = evaluate_policy(expert, env, 1000)
+#print("##### Expert Reward:", rew_mean, rew_std)
 
-reward, _ = evaluate_policy(expert, env, 100)
-print("##### Expert Reward:", reward)
-
-
+# Create student
 naive_agent = PPO(policy="MultiInputPolicy", env=env, verbose=1)
 
-reward, _ = evaluate_policy(naive_agent, env, 100)
-print("##### Naive Agent Reward:", reward)
+# Evaluate student
+#rew_mean, rew_std = evaluate_policy(naive_agent, env, 1000)
+#print("##### Naive Agent Reward:", rew_mean, rew_std)
 
 
-# begin BC: sample trajectries and pretrain naive agent
+# Collect trajectories from expert
 transitions = sample_expert_transitions(expert)
-
 print("transitions: ", len(transitions))
+
+
+# Setup BC trainer
 bc_trainer = bc.BC(
     policy=naive_agent.policy,
     observation_space=env.observation_space,
@@ -77,26 +84,20 @@ bc_trainer = bc.BC(
     rng=rng,
 )
 
-
 evaluation_env = make_vec_env(
-    "PandaReachDense-v3",
+    "PandaReach-v3",
     rng=rng
 )
 
 
-
+# Evaluate naive policy
 print("Evaluating the untrained policy.")
-reward, _ = evaluate_policy(bc_trainer.policy, evaluation_env, n_eval_episodes=100)
-
-print("##### Naive Agent policy before pretraining Reward:", reward)
-
+#rew_mean, rew_std = evaluate_policy(bc_trainer.policy, evaluation_env, n_eval_episodes=1000)
+#print("##### Naive Policy Reward:", rew_mean, rew_std)
 
 
-
-# visualize agent for 500 timesteps
-print("##### training finished, begin visualizing agent... ######")
-
-
+""" # visualize agent for 500 timesteps
+print("##### training finished, begin visualizing agent... #####")
 env = gym.make("PandaReachDense-v3", render_mode="human")
 observation, info = env.reset()
 
@@ -109,26 +110,19 @@ for i in range(500):
     if terminated or truncated:
         observation, info = env.reset()
     time.sleep(0.01)
+print("#### Visualization ended #####") """
 
 
+# Train student with BC
 
-print("#### Visualization ended #####")
+bc_trainer.train(n_epochs=n_epochs_bc_pretrain, log_interval=10)
+#reward, _ = evaluate_policy(bc_trainer.policy, evaluation_env, 1000)
 
-n_epochs_bc_pretrain = 100
-bc_trainer.train(n_epochs=n_epochs_bc_pretrain)
-reward, _ = evaluate_policy(bc_trainer.policy, evaluation_env, 100)
-print("Naive agent after pretraining Reward:", reward)
-
+# Evaluate student after BC
+#print("Naive agent after pretraining Reward:", reward)
 
 
-SaveModel = True # Set to True if agent model needs to be saved after training.
-alg_name = PPO.__name__
-env_name = ["PandaReachDense-v3"][0]
-experiment_name = datetime.now().strftime("%Y.%m.%d-%H:%M:%S") + "-" + env_name + "-" \
-                + alg_name + "-" + str(n_epochs_bc_pretrain) + "ts" + "-" + randomname.get_name()
-
-modeldir = "./panda_gym/pg_pretrained_agents/"
-
+# Save if needed
 if SaveModel:
     naive_agent.save(modeldir + experiment_name)
     print("saved pretrained agent ", experiment_name)

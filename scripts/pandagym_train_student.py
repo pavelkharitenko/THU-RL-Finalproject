@@ -2,25 +2,25 @@ from stable_baselines3 import DDPG, TD3, SAC, PPO
 import gymnasium as gym
 from datetime import datetime
 import panda_gym, time, randomname
-
-
-
+from utils import evaluate_agent
+from imitation.util.util import make_vec_env
+import numpy as np
 # Can be run just for training, and visualizing, or run with saving model and logging.
 SaveModelandLogs = True # Set to True if agent model needs to be saved after training.
 
 # select experiment_parameters
-max_timesteps =  10_000
+max_timesteps =  20_000
 alg_name = PPO.__name__
 
 # choose pandagym environment (reach/pickandplace/etc., dense/sparse, joint/endeffector)
 env_name = ["PandaReachDense-v3", "PandaReach-v3", "PandaReachJointsDense-v3", "PandaReachJoints-v3",
             "PandaPushDense-v3"][1]
 
-pretrained_agent_path = "panda_gym/pg_pretrained_agents/2024.06.15-15:33:45-PandaReachDense-v3-PPO-100ts-partial-camera-copy"
-
+pretrained_agent_path = "panda_gym/pg_pretrained_agents/2024.06.21-15:07:08-PandaReach-v3-PPO-100ts-sluggish-foot"
+pretrained_agent_name = "2024.06.21-15:07:08-PandaReach-v3-PPO-100ts-sluggish-foot"
 
 # create experiment name like "2024.05.14-20:26:13-PandaReach-v3-DDPG-10000ts-muted-radio_1"
-experiment_name = pretrained_agent_path + "-" + "refined-for"+ env_name + "-" + str(max_timesteps) + "ts"
+experiment_name = pretrained_agent_name + "-" + "refined-for"+ env_name + "-" + str(max_timesteps) + "ts"
 
 
 print("Begin experiment ", experiment_name)
@@ -31,7 +31,7 @@ modeldir = "./panda_gym/pg_agents/"
 
 
 # run training experiment
-env = gym.make(env_name, render_mode="human")
+env = gym.make(env_name)
 env.reset()
 model = PPO.load(pretrained_agent_path, policy="MultiInputPolicy", env=env, verbose=1, tensorboard_log=logdir)
 # start train pretrained agent
@@ -57,6 +57,15 @@ for i in range(500):
     if terminated or truncated:
         observation, info = env.reset()
     time.sleep(0.01)
+
+
+rng = np.random.default_rng(0)
+evaluation_env = make_vec_env(
+    "PandaReach-v3",
+    rng=rng
+)
+
+evaluate_agent("panda_gym/pg_agents/report_agents/2024.06.16-23:38:46-PandaReach-v3-TD3-35000ts-quiet-store", TD3, evaluation_env, 1000)
 
 print("#### Visualization ended #####")
 

@@ -5,5 +5,6 @@ import panda_gym, time, randomname
 
 env = gym.make("PandaReachDense-v3")
 env.reset()
-model = DDPG(policy="MultiInputPolicy", env=env, verbose=1)
+model = SAC(policy="MultiInputPolicy", env=env, verbose=1)
 
+print("window size=", model._stats_window_size)
