@@ -2,66 +2,47 @@
 
 ### Installation:
 
-Install packages `stable-baselines 3`  (sb3) and `gymnasium`, and `pandagym` according to their docs. (Also install `seaborn` package if you want to run the plot script)
+Install through pip the packages `stable_baselines3`and `gymnasium`, `imitation` and `pandagym` according to their docs. (Also install `seaborn` package if you want to run the plot script)
 
 Can be installed into a python environment like conda.
 
 
 ### Run Experiment
 
-After installing (and activating conda environment, if any), run a script with `python3 panda_gym_test_agent.py`.
+After installing (and activating conda environment, if any), run a script with `python3 pandagym_test_agent.py`.
 
 ### Alternative options
 
-Run in Google Colab (install sb3, gymnasium, panda and copy code to there) if it is not working on OS besides Ubuntu.
+Run in Google Colab (install sb3, gymnasium, panda, etc. and copy code to there) if it is not working on OS besides Ubuntu.
 
 
 ### Available scripts:
 
 - `pandagym_train_sb3.py` - to train RL agent in pandagym environment, can be visualized and saved
 
-- `plot_panda_gym_results.py` - to plot results after training, if agent was saved
-
 - `pandagym_test_agent.py` - to test your saved RL agent in pandagym env.
+
+- `pandagym_imitation_learning.py` - pretrain and save an RL agent on expert demonstrations via BC.
+
+- `pandagym_train_student.py` - continue training a pretrained RL agent on expert demonstrations.
+
+- `pandagym_curriculum_learning.py` - decreasing threshold for Reach task using the sparse-end-effector configuation.
+
+- `plot_panda_gym_results.py` - to plot results after training, if agent was saved
 
 - `pandagym_train_demo.py` - no use, just minimal demo code for presenting training agent in gym
 
 - `gym_classiccontrol_sb3.py` - to just try out gymnasium and sb3 libraries.
 
 
-### Possible open tasks and questions:
+Other scripts are just similar and do some of the functions above for multiple environmens/algorithms at once.
 
-- [] Can we solve reach, pick-and-place, etc. tasks with DDPG if we train more than 10.000 timesteps?
 
-- [] Can we solve reach, pick-and-place, etc. tasks with any other algorithm if DDPG doesnt work?
+### Agents:
 
-- [] Can we improve the training somehow? (Pretrain agent with demonstrations/Imitation Learning)
+Agents plotted and used in the final report are in `./panda_gym/pg_agents/final_agents`.
 
-*Previously from midterm presentation slide*
-
-1. Consider RL setting：
-Which algorithm for which task manipulation problem will work the best? 
-Can we converge with baseline algorithms for the most realistic configuration (joint control + sparse)?
-
-2. Consider Training result:
-Is the resulting behaviour the agent learned efficient? 
-Is the motion maybe jerky, not fluent, or uncanny overall? 
-
-3. Consider Experiment tricks:
-Can we mitigate issues in 1. and 2. with improvements common for RL in robotics, such as Behaviour Cloning, Curriculum Learning, Reward Shaping, or hybrid architectures with model-based controllers?
+Their respective tensorboard logs are in `./panda_gym/pg_logs` with the same last name.
 
 
 
-### Results from Midterm experiment 
-
-(agents right-winch, muted-radio, dynamic-denim, odious-redoubt in pandatrain_logs)
-
-![](plots/midterm_results.png)
-
-
-
-### Objectives for Final experiment
-
-- joint control can learn pick and place if trained on dense rewards. However, the resulting movement are not fluent. Apply reward shaping to dense-jointcontrol-pickandplace agent, to obtain fluent motions.
-
-- joint control and sparse rewards cannot learn pick and place even for 20_000 timesteps. Try apply curriculum learning or pre-train with demonstrations.
